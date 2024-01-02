@@ -49,7 +49,15 @@ def evasion(input_image: ImageBase):
         }
     
     # Detección de rostro de imagen de request
-    num_faces, qa = face_detector(image)
+    try:
+        num_faces, qa = face_detector(image)
+    except Exception as error:
+        return {
+            "details": f"Error: Face Detection error, {error}",
+            "score": 0.0,
+            "prediction": True,
+            "status": 2
+        }
 
     if num_faces == 0:
         return {
@@ -79,7 +87,15 @@ def evasion(input_image: ImageBase):
         
 
     # Si solo se detectó un rostro entonces cortamos imagen
-    cropped_face, distances_xyz = crop_face(image)
+    try:
+        cropped_face, distances_xyz = crop_face(image)
+    except Exception as error:
+        return {
+            "details": f"Error: crop face error, {error}",
+             "score": 0.0,
+            "prediction": True,
+            "status": 3
+        }
 
     dist = abs(distances_xyz[0] - distances_xyz[1])
 
@@ -132,7 +148,15 @@ def evasion(input_image: ImageBase):
         }
         
     # Deteccion de accesorios (lentes, mascarilla y sombrero)
-    glasses, hat = detect_glass_hat(cropped_face)
+    try:
+        glasses, hat = detect_glass_hat(cropped_face)
+    except Exception as error:
+        return {
+            "details": f"Error: Accessories GH error, {error}",
+            "score": 0.0,
+            "prediction": True,
+            "status": 4
+        }
 
     if glasses > 0:
         return {
@@ -151,7 +175,15 @@ def evasion(input_image: ImageBase):
         }
        
     # Detección de mascarillas
-    score = detect_mask(cropped_face)
+    try:
+        score = detect_mask(cropped_face)
+    except Exception as error:
+        return {
+            "details": f"Error: Accessories Mask error, {error}",
+            "score": 0.0,
+            "prediction": True,
+            "status": 4
+        }
 
     if score > 0.72:
         return {
